@@ -6,7 +6,7 @@
 ## This README file contains the description of this repo, how to run my files and what files are included in this repo
 
 ### Description
-A function is made in R. The document and test for the function are also provided.
+A function is made in R. The document and test for the function are also provided in this repo.
 
 ### How to compile and run my files?
 1. Please open the function.Rmd file in RStudio.
@@ -15,7 +15,7 @@ A function is made in R. The document and test for the function are also provide
 
 ### Files included in the repo
 1. README.md - The description of this repo
-2. function.Rmd - A Rmd file
+2. function.Rmd - A Rmd file that create a function
 3. function.md - A md file that is knitted from function.Rmd
 
 
