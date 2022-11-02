@@ -1,0 +1,158 @@
+Assignment B-1: Making a function
+================
+
+1.  Load the needed packages below.
+
+``` r
+library(palmerpenguins)
+library(dplyr)
+```
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+library(tibble)
+library(testthat)
+```
+
+    ## 
+    ## Attaching package: 'testthat'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     matches
+
+2.  Exercise 1: Make a Function and Exercise 2: Document your Function
+
+Make a function that bundles a specific **group_by() %\>% summarise()**
+workflow and document the function using **roxygen2 tags**
+
+``` r
+#' Median Value in Each Group
+#'
+#' The function groups all data in a tibble by variable `group`  
+#' and get the median of a numerical variable `x` in each group
+#'
+#' @param data - The input data that you are interested in to get the median value of each group in the tibble
+#' @param var_x - A numerical variable x in the data that you are interested in to get the median value in each group
+#' @param var_group - A variable in the data that you want to use it to group the data
+#' @param na.rm - A parameter determines if remove NA values or not when getting the median
+#' 
+#' @return The function returns the median values of var_x in each var_group, which should be a tibble
+
+
+median_in_group <- function(data, var_x, var_group, na.rm) {
+
+  # determine if the input data is a tibble
+  # determine if the variable x that you want to get median values is in numerical format 
+  # use deparse(substitute(var_x)) to get the name of the var_x 
+  # data[["name of a variable"]] can help extract the column
+  if(!is_tibble(data) || !is.numeric(data[[deparse(substitute(var_x))]])) {
+    stop('The data should be a tibble and the variable x should be in numerical format.')
+  }
+  
+  median_values <- data %>% # load data
+    group_by({{var_group}}) %>% # group data by `var_group`
+    summarise(median = median({{var_x}}, na.rm = na.rm)) # get the median of var_x in each group, you can remove NA values or not
+  
+  return(median_values) 
+}
+```
+
+3.  Exercise 3: Include examples
+
+Use penguins data set to show different examples.
+
+``` r
+head(penguins)
+```
+
+    ## # A tibble: 6 × 8
+    ##   species island    bill_length_mm bill_depth_mm flipper_l…¹ body_…² sex    year
+    ##   <fct>   <fct>              <dbl>         <dbl>       <int>   <int> <fct> <int>
+    ## 1 Adelie  Torgersen           39.1          18.7         181    3750 male   2007
+    ## 2 Adelie  Torgersen           39.5          17.4         186    3800 fema…  2007
+    ## 3 Adelie  Torgersen           40.3          18           195    3250 fema…  2007
+    ## 4 Adelie  Torgersen           NA            NA            NA      NA <NA>   2007
+    ## 5 Adelie  Torgersen           36.7          19.3         193    3450 fema…  2007
+    ## 6 Adelie  Torgersen           39.3          20.6         190    3650 male   2007
+    ## # … with abbreviated variable names ¹​flipper_length_mm, ²​body_mass_g
+
+Get the median values of body_mass_g in each island (remove NA values
+when getting the median values):
+
+``` r
+median_in_group(penguins, body_mass_g, island, TRUE)
+```
+
+    ## # A tibble: 3 × 2
+    ##   island    median
+    ##   <fct>      <dbl>
+    ## 1 Biscoe     4775 
+    ## 2 Dream      3688.
+    ## 3 Torgersen  3700
+
+Get the median values of bill_length_mm in each species (not remove NA
+values when getting the median values):
+
+``` r
+median_in_group(penguins, bill_length_mm, species, FALSE)
+```
+
+    ## # A tibble: 3 × 2
+    ##   species   median
+    ##   <fct>      <dbl>
+    ## 1 Adelie      NA  
+    ## 2 Chinstrap   49.6
+    ## 3 Gentoo      NA
+
+An example that deliberately show an error: input data should be a
+tibble and var_x should be a numerical variable
+
+``` r
+median_in_group(penguins, island, year)
+```
+
+    ## Error in median_in_group(penguins, island, year): The data should be a tibble and the variable x should be in numerical format.
+
+4.  Exercise 4: Test the Function
+
+Test the function with multiple non-redundant inputs:
+
+``` r
+# Get the correct median of body_mass_g (remove NA values) in each island to help for testing 
+median_body_mass_g_in_island <- penguins %>%
+  group_by(island) %>%
+  summarise(median = median(body_mass_g, na.rm = TRUE))
+
+# Get the correct median of body_mass_g (not remove NA values) in each island to help for testing
+median_body_mass_g_NA_in_island <- penguins %>%
+  group_by(island) %>%
+  summarise(median = median(body_mass_g, na.rm = FALSE))
+
+test_that("Test median_in_group function", {
+  # expect the function to get the same result as median_body_mass_g_in_island
+  expect_equal(median_in_group(penguins, body_mass_g, island, TRUE), median_body_mass_g_in_island)
+  # expect the function to get the same result as median_body_mass_g_NA_in_island
+  expect_equal(median_in_group(penguins, body_mass_g, island, FALSE), median_body_mass_g_NA_in_island)
+  # expect the return of the function to be a tibble
+  expect_equal(is_tibble(median_in_group(penguins, body_mass_g, island, TRUE)), TRUE)
+  # expect the var_x to be a numerical variable instead of a categorical variable
+  expect_error(median_in_group(penguins, island, year))
+  # expect the input data to be a tibble instead of a list
+  expect_error(median_in_group(c("Biscoe", "Dream", "Torgersen"), island, year))
+  # expect the input data to be a tibble instead of a number
+  expect_error(median_in_group(numeric(1), island, year))
+}) 
+```
+
+    ## Test passed 🌈
