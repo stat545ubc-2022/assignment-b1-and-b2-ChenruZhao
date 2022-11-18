@@ -1,0 +1,18 @@
+Package: b2
+Title: A function can get median value in each group
+Version: 1.0.0
+Authors@R: 
+    person("Chenru", "Zhao", , "crzhao@student.ubc.ca", role = c("aut", "cre"))
+Description: The goal of b2 is to create a function that can help get the median value in each group of a tibble.
+Imports:
+    tibble,
+    dplyr,
+    magrittr
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+Suggests: 
+    testthat (>= 3.0.0),
+    palmerpenguins
+Config/testthat/edition: 3

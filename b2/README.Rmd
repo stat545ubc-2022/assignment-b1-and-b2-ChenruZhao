@@ -1,0 +1,49 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# b2
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of b2 is to create a function that can help get the median value in each group of a tibble.
+
+## Installation
+
+You can install the development version of b2 from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("stat545ubc-2022/assignment-b1-and-b2-ChenruZhao/b2")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(b2)
+## basic example code
+```
+
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+
+```{r examples}
+median_in_group(palmerpenguins::penguins, body_mass_g, island, TRUE)
+
+median_in_group(palmerpenguins::penguins, bill_length_mm, species, FALSE)
+
+median_in_group(palmerpenguins::penguins, year, island, TRUE)
+```
